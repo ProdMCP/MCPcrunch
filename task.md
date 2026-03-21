@@ -55,3 +55,8 @@
     - [x] Create `.gitignore`
     - [x] Create `LICENSE` (MIT)
     - [x] Sync all markdown files to project root
+- [x] Publishing to PyPI [x]
+    - [x] Verify `pyproject.toml`
+    - [x] Build package (`python3 -m build`)
+    - [x] Verify distribution (`twine check`)
+    - [x] Provide upload instructions

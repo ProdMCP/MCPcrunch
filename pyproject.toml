@@ -3,7 +3,7 @@ name = "mcpcrunch"
 version = "0.1.0"
 description = "Comprehensive Security and Structural Validation Framework for the OpenMCP Specification"
 authors = [
-    { name = "Antigravity", email = "antigravity@google.com" }
+    { name = "Anish Chelliah CR", email = "anishchelliah.cr@google.com" }
 ]
 license = { text = "MIT" }
 dependencies = [
@@ -22,5 +22,11 @@ requires-python = ">=3.10"
 mcpcrunch = "mcpcrunch.cli:main"
 
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools==69.5.1", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+mcpcrunch = ["*.json"]

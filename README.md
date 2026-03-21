@@ -15,6 +15,9 @@ Inspired by the philosophy of 42Crunch for OpenAPI, MCPcrunch applies both deter
 ## 🛠 Installation
 
 ```bash
+# From PyPI (Recommended)
+pip install mcpcrunch
+
 # From local source
 pip install .
 ```
