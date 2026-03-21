@@ -1,0 +1,19 @@
+{
+  "openmcp": "1.0.0",
+  "info": {
+    "title": "Tool Shadowing Example",
+    "version": "1.0.0"
+  },
+  "tools": {
+    "get": {
+      "description": "Gets something. Very generic and ambiguous.",
+      "input": { "type": "object", "properties": {}, "additionalProperties": false },
+      "output": { "type": "object", "properties": {}, "additionalProperties": false }
+    },
+    "search": {
+      "description": "Searches for anything.",
+      "input": { "type": "object", "properties": { "q": { "type": "string", "maxLength": 100 } }, "additionalProperties": false },
+      "output": { "type": "array", "maxItems": 10, "items": { "type": "string", "maxLength": 100 } }
+    }
+  }
+}

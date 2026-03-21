@@ -1,0 +1,57 @@
+# Task: Create MCPcrunch Validation Package
+
+- [x] Initial Research and Rule Extraction [x]
+    - [x] Read OpenMCP 1.0.0 Spec (1.0.0.md)
+    - [x] Read OpenMCP Schema (schema.json)
+    - [x] Document Deterministic Validations (deterministic_validations.md)
+    - [x] Document Semantic Validations (semantic_validations.md)
+- [x] Project Setup [x]
+    - [x] Initialize Python package structure
+    - [x] Create `pyproject.toml`
+    - [x] Create `src/mcpcrunch` directory structure
+- [x] Implementation Plan [x]
+    - [x] Create `implementation_plan.md`
+    - [x] Get user approval
+- [x] Implementation - Core [x]
+    - [x] Implement LLM Base Class (Gemini & OpenAI)
+    - [x] Implement result models and scoring logic
+- [x] Implementation - Deterministic Validators [x]
+    - [x] OMCP-FMT: Format Integrity
+    - [x] OMCP-DAT: Data Quality
+    - [x] OMCP-SEC: Security & Auth
+- [x] Implementation - Semantic Validators [x]
+    - [x] OMCP-ADV-001: Semantic Poisoning
+    - [x] OMCP-ADV-003: Semantic Exfiltration
+    - [x] OMCP-ADV-004: Tool Shadowing
+    - [x] OMCP-ADV-005: Localhost SSRF
+- [x] Verification and Testing [x]
+    - [x] Create test suite
+    - [x] Run validations on example schemas
+    - [x] Produce `walkthrough.md`
+- [x] Adding Examples [x]
+    - [x] Create `examples/` directory
+    - [x] Add `minimal_valid.json`
+    - [x] Add `vulnerable_data_quality.json`
+    - [x] Add `vulnerable_security.json`
+    - [x] Add `adversarial_poisoning.json`
+    - [x] Update `walkthrough.md`
+- [x] Expanding Validations [x]
+    - [x] Create consolidated `validations.md`
+    - [x] Implement more deterministic rules (OMCP-FMT-005, DAT-006, SEC-005)
+    - [x] Add Rule ID comments to source code
+- [x] Library Exposure [x]
+    - [x] Expose core classes in `__init__.py`
+    - [x] Add Python usage example to `walkthrough.md`
+- [x] Comprehensive Testing [x]
+    - [x] Create `tests/test_deterministic.py`
+    - [x] Create `tests/test_scoring.py`
+    - [x] Create `tests/test_engine.py`
+    - [x] Create `tests/test_semantic.py` (Mock LLM)
+    - [x] Create `tests/test_cli.py`
+    - [x] Run all tests with `pytest` (16 passed)
+    - [x] Update documentation
+- [x] Documentation and Finalization [x]
+    - [x] Create `README.md`
+    - [x] Create `.gitignore`
+    - [x] Create `LICENSE` (MIT)
+    - [x] Sync all markdown files to project root

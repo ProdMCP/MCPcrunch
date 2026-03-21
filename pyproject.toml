@@ -1,0 +1,26 @@
+[project]
+name = "mcpcrunch"
+version = "0.1.0"
+description = "Comprehensive Security and Structural Validation Framework for the OpenMCP Specification"
+authors = [
+    { name = "Antigravity", email = "antigravity@google.com" }
+]
+license = { text = "MIT" }
+dependencies = [
+    "jsonschema>=4.20.0",
+    "pydantic>=2.5.0",
+    "google-generativeai>=0.3.0",
+    "openai>=1.0.0",
+    "python-dotenv>=1.0.0",
+    "rich>=13.7.0",
+    "pyyaml>=6.0.1",
+]
+readme = "README.md"
+requires-python = ">=3.10"
+
+[project.scripts]
+mcpcrunch = "mcpcrunch.cli:main"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"

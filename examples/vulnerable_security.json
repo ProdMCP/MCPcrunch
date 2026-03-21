@@ -1,0 +1,23 @@
+{
+  "openmcp": "1.0.0",
+  "info": {
+    "title": "Security Vulnerabilities",
+    "version": "1.0.0"
+  },
+  "tools": {
+    "no_security_tool": {
+      "description": "Tool with no security requirement",
+      "input": { "type": "object", "properties": {}, "additionalProperties": false },
+      "output": { "type": "object", "properties": {}, "additionalProperties": false }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "insecure_key": {
+        "type": "apiKey",
+        "name": "token",
+        "in": "query"
+      }
+    }
+  }
+}

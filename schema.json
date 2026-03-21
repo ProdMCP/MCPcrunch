@@ -1,0 +1,232 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://openmcp.org/schemas/v1.0.0/schema.json",
+  "title": "OpenMCP Specification v1.0.0",
+  "type": "object",
+  "properties": {
+    "openmcp": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "$self": {
+      "type": "string",
+      "format": "uri-reference"
+    },
+    "info": {
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "summary": { "type": "string" },
+        "description": { "type": "string" },
+        "termsOfService": { "type": "string", "format": "uri" },
+        "contact": { "$ref": "#/definitions/Contact" },
+        "license": { "$ref": "#/definitions/License" },
+        "version": { "type": "string" }
+      },
+      "required": ["title", "version"]
+    },
+    "servers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "url": { "type": "string" },
+          "description": { "type": "string" },
+          "name": { "type": "string" },
+          "variables": {
+            "type": "object",
+            "additionalProperties": { "$ref": "#/definitions/ServerVariable" }
+          }
+        },
+        "required": ["url"]
+      }
+    },
+    "tools": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/Tool"
+      }
+    },
+    "prompts": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/Prompt"
+      }
+    },
+    "resources": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/Resource"
+      }
+    },
+    "components": {
+      "type": "object",
+      "properties": {
+        "schemas": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/definitions/Schema" }
+        },
+        "tools": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/definitions/Tool" }
+        },
+        "prompts": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/definitions/Prompt" }
+        },
+        "resources": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/definitions/Resource" }
+        },
+        "examples": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/definitions/Example" }
+        },
+        "securitySchemes": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/SecurityScheme"
+          }
+        }
+      }
+    },
+    "security": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/SecurityRequirement" }
+    },
+    "tags": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/Tag" }
+    },
+    "externalDocs": { "$ref": "#/definitions/ExternalDocumentation" }
+  },
+  "required": ["openmcp", "info"],
+  "anyOf": [
+    { "required": ["tools"] },
+    { "required": ["prompts"] },
+    { "required": ["resources"] }
+  ],
+  "definitions": {
+    "Contact": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "url": { "type": "string", "format": "uri" },
+        "email": { "type": "string", "format": "email" }
+      }
+    },
+    "License": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "identifier": { "type": "string" },
+        "url": { "type": "string", "format": "uri" }
+      },
+      "required": ["name"],
+      "oneOf": [
+        { "required": ["identifier"] },
+        { "required": ["url"] },
+        { "not": { "anyOf": [{ "required": ["identifier"] }, { "required": ["url"] }] } }
+      ]
+    },
+    "ServerVariable": {
+      "type": "object",
+      "properties": {
+        "enum": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "default": { "type": "string" },
+        "description": { "type": "string" }
+      },
+      "required": ["default"]
+    },
+    "Tool": {
+      "type": "object",
+      "properties": {
+        "description": { "type": "string" },
+        "input": { "$ref": "#/definitions/Schema" },
+        "output": { "$ref": "#/definitions/Schema" },
+        "security": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/SecurityRequirement" }
+        }
+      },
+      "required": ["input", "output"]
+    },
+    "Prompt": {
+      "type": "object",
+      "properties": {
+        "description": { "type": "string" },
+        "input": { "$ref": "#/definitions/Schema" },
+        "output": { "$ref": "#/definitions/Schema" }
+      },
+      "required": ["input", "output"]
+    },
+    "Resource": {
+      "type": "object",
+      "properties": {
+        "description": { "type": "string" },
+        "output": { "$ref": "#/definitions/Schema" }
+      },
+      "required": ["output"]
+    },
+    "Tag": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "summary": { "type": "string" },
+        "description": { "type": "string" },
+        "externalDocs": { "$ref": "#/definitions/ExternalDocumentation" },
+        "parent": { "type": "string" },
+        "kind": { "type": "string" }
+      },
+      "required": ["name"]
+    },
+    "ExternalDocumentation": {
+      "type": "object",
+      "properties": {
+        "description": { "type": "string" },
+        "url": { "type": "string", "format": "uri" }
+      },
+      "required": ["url"]
+    },
+    "SecurityRequirement": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "string" }
+      }
+    },
+    "SecurityScheme": {
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "enum": ["apiKey", "http", "mutualTLS", "oauth2", "openIdConnect"] },
+        "description": { "type": "string" },
+        "name": { "type": "string" },
+        "in": { "type": "string", "enum": ["header", "query", "cookie"] },
+        "scheme": { "type": "string" },
+        "bearerFormat": { "type": "string" },
+        "flows": { "type": "object" },
+        "openIdConnectUrl": { "type": "string", "format": "uri" }
+      },
+      "required": ["type"]
+    },
+    "Schema": {
+      "anyOf": [
+        { "type": "object" },
+        { "type": "boolean" }
+      ]
+    },
+    "Example": {
+      "type": "object",
+      "properties": {
+        "summary": { "type": "string" },
+        "description": { "type": "string" },
+        "value": { "always_valid": true },
+        "externalValue": { "type": "string", "format": "uri" }
+      }
+    }
+  }
+}
