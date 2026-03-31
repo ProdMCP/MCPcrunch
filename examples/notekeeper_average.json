@@ -1,0 +1,313 @@
+{
+  "openmcp": "1.0.0",
+  "info": {
+    "title": "NoteKeeper — Simple Notes API",
+    "version": "0.5.0",
+    "description": "A basic MCP server for managing notes. Demonstrates common mistakes that lower conformance scores."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/mcp",
+      "description": "Local dev server (insecure HTTP)"
+    }
+  ],
+
+  "tools": {
+    "create_note": {
+      "description": "Create a new note",
+      "input": {
+        "type": "object",
+        "properties": {
+          "title": {"type": "string"},
+          "content": {"type": "string"},
+          "tags": {
+            "type": "array",
+            "items": {"type": "string"}
+          }
+        },
+        "required": ["title", "content"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "note_id": {"type": "string"},
+          "created_at": {"type": "string"}
+        }
+      }
+    },
+
+    "search_notes": {
+      "description": "Search notes by keyword",
+      "input": {
+        "type": "object",
+        "properties": {
+          "query": {"type": "string"},
+          "limit": {"type": "integer"}
+        },
+        "required": ["query"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "note_id": {"type": "string"},
+                "title": {"type": "string"},
+                "snippet": {"type": "string"}
+              }
+            }
+          },
+          "total": {"type": "integer"}
+        }
+      }
+    },
+
+    "delete_note": {
+      "input": {
+        "type": "object",
+        "properties": {
+          "note_id": {"type": "string"}
+        },
+        "required": ["note_id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "deleted": {"type": "boolean"}
+        }
+      }
+    },
+
+    "update_note": {
+      "description": "Update an existing note",
+      "input": {
+        "type": "object",
+        "properties": {
+          "note_id": {"type": "string"},
+          "title": {"type": "string"},
+          "content": {"type": "string"}
+        },
+        "required": ["note_id"],
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "updated_at": {"type": "string"}
+        }
+      }
+    },
+
+    "share_note": {
+      "description": "Share a note with another user",
+      "input": {
+        "type": "object",
+        "properties": {
+          "note_id": {"type": "string", "maxLength": 36},
+          "recipient_email": {"type": "string", "maxLength": 254}
+        },
+        "required": ["note_id", "recipient_email"],
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "shared": {"type": "boolean"},
+          "share_url": {"type": "string"}
+        }
+      }
+    },
+
+    "get_note_stats": {
+      "description": "Get statistics for a note",
+      "input": {
+        "type": "object",
+        "properties": {
+          "note_id": {"type": "string", "maxLength": 36}
+        },
+        "required": ["note_id"],
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "word_count": {"type": "integer"},
+          "view_count": {"type": "integer"},
+          "last_viewed": {"type": "string"}
+        }
+      }
+    }
+  },
+
+  "prompts": {
+    "summarize_notes": {
+      "description": "Summarize all notes matching a query",
+      "input": {
+        "type": "object",
+        "properties": {
+          "query": {"type": "string"},
+          "max_notes": {"type": "integer"}
+        },
+        "required": ["query"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "summary": {"type": "string"}
+        }
+      }
+    },
+
+    "draft_note": {
+      "description": "Draft a note from a topic description",
+      "input": {
+        "type": "object",
+        "properties": {
+          "topic": {"type": "string", "maxLength": 200},
+          "style": {"type": "string", "enum": ["formal", "casual", "technical"]}
+        },
+        "required": ["topic"],
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "draft": {"type": "string"}
+        }
+      }
+    },
+
+    "tag_suggestions": {
+      "input": {
+        "type": "object",
+        "properties": {
+          "content": {"type": "string"}
+        },
+        "required": ["content"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {"type": "string"}
+          }
+        }
+      }
+    },
+
+    "weekly_digest": {
+      "description": "Generate a weekly digest of recent notes",
+      "input": {
+        "type": "object",
+        "properties": {
+          "week_offset": {"type": "integer", "minimum": 0, "maximum": 52}
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "digest": {"type": "string"}
+        }
+      }
+    },
+
+    "title_generator": {
+      "description": "Generate a title for a note based on its content",
+      "input": {
+        "type": "object",
+        "properties": {
+          "content": {"type": "string", "maxLength": 5000}
+        },
+        "required": ["content"],
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "suggestions": {
+            "type": "array",
+            "items": {"type": "string", "maxLength": 100},
+            "maxItems": 5
+          }
+        }
+      }
+    }
+  },
+
+  "resources": {
+    "recent_notes": {
+      "description": "List of recently modified notes",
+      "output": {
+        "type": "object",
+        "properties": {
+          "notes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "note_id": {"type": "string"},
+                "title": {"type": "string"},
+                "modified_at": {"type": "string"}
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "note_count": {
+      "description": "Total number of notes",
+      "output": {
+        "type": "object",
+        "properties": {
+          "total": {"type": "integer"}
+        }
+      }
+    },
+
+    "tag_cloud": {
+      "description": "Tag frequency data",
+      "output": {
+        "type": "object",
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {"type": "string"},
+                "count": {"type": "integer"}
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "storage_usage": {
+      "description": "Storage usage statistics",
+      "output": {
+        "type": "object",
+        "properties": {
+          "used_bytes": {"type": "integer"},
+          "limit_bytes": {"type": "integer"},
+          "usage_percent": {"type": "number"}
+        }
+      }
+    }
+  },
+
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}

@@ -1,85 +1,149 @@
 # MCPcrunch 🔍
 
-**MCPcrunch** is a comprehensive security and structural validation framework for the **OpenMCP Specification**. 
+**MCPcrunch** is a comprehensive security auditing and conformance testing framework for the **OpenMCP Specification**.
 
-Inspired by the philosophy of 42Crunch for OpenAPI, MCPcrunch applies both deterministic (static analysis) and semantic (LLM-based) validation rules to ensure that your Model Context Protocol (OpenMCP) specifications are robust, secure, and ready for autonomous agentic environments.
+Inspired by [42Crunch](https://42crunch.com) for OpenAPI, MCPcrunch applies deterministic, semantic, and contract-level validation to ensure your MCP specifications are robust, secure, and production-ready.
 
 ## 🚀 Key Features
 
-*   **Deterministic Auditing**: 20+ rules covering Format (FMT), Data Quality (DAT), and Security (SEC) categories.
-*   **Semantic Risk Analysis**: LLM-powered (Gemini/OpenAI) detection of Adversarial (ADV) threats like Prompt Injection and Sensitive Field Leakage.
-*   **42Crunch-Style Scoring**: Instant security score (0-100) based on severity-weighted issue detection.
-*   **Developer Friendly**: Use as a standalone CLI tool or integrate directly into your Python workflows.
-*   **Rich Reporting**: Beautiful terminal output with summary tables and detailed issue breakdowns.
+- **Security Audit** — 17+ deterministic rules covering Format (FMT), Data Quality (DAT), and Security (SEC). Instant 0–100 security score.
+- **Conformance Testing** — 13 static tests and 40 runtime test definitions across 10 categories. Validates that specs and servers implement the OpenMCP contract correctly.
+- **Weighted Scoring** — Severity-based conformance score (0–100) with letter grades (A/B/C/D/F).
+- **Semantic Analysis** — LLM-powered (Gemini/OpenAI) detection of adversarial threats like prompt injection and sensitive field leakage.
+- **Dual Interface** — Full-featured CLI and first-class Python API.
+- **Rich Reporting** — Beautiful terminal output with summary tables, score/grade display, and JSON export.
 
 ## 🛠 Installation
 
 ```bash
-# From PyPI (Recommended)
 pip install mcpcrunch
-
-# From local source
-pip install .
 ```
 
-## 📖 Usage
+## 📖 Quick Start
 
-### Command Line Interface (CLI)
-
-Audit an OpenMCP specification file:
+### Security Audit (CLI)
 
 ```bash
-# Deterministic audit (default)
+# Deterministic audit
 mcpcrunch spec.json --schema schema.json
 
-# Full audit with semantic analysis (Gemini)
-mcpcrunch spec.json --llm gemini --api-key YOUR_GEMINI_API_KEY
+# With semantic analysis
+mcpcrunch spec.json --schema schema.json --llm gemini --api-key $GEMINI_API_KEY
 ```
 
-> [!NOTE]
-> By omitting the `--llm` flag, the auditor will only perform deterministic (static) checks.
+### Conformance Testing (CLI)
+
+```bash
+# Static conformance tests (no server needed)
+mcpcrunch conformance spec.json --schema schema.json --static-only
+
+# Full suite against a live server
+mcpcrunch conformance spec.json --server-url https://api.example.com/mcp --bearer-token $TOKEN
+
+# Export JSON report
+mcpcrunch conformance spec.json --schema schema.json --static-only --output report.json
+```
 
 ### Python API
 
-Integrate validation directly into your application:
-
 ```python
-from mcpcrunch import MCPcrunch, GeminiProvider
+import json
+from mcpcrunch import MCPcrunch, ConformanceRunner
 
-# Initialize engine (Deterministic only)
-crunch = MCPcrunch(schema_path="schema.json")
+# ── Security Audit ──
+crunch = MCPcrunch("schema.json")
+with open("spec.json") as f:
+    spec = json.load(f)
 
-# Full engine (Deterministic + Semantic)
-llm = GeminiProvider(api_key="your-key")
-crunch_with_llm = MCPcrunch(schema_path="schema.json", llm=llm)
+report = crunch.audit(spec)
+print(f"Security Score: {report.overall_score}/100")
 
-# Audit a specification
-with open("myspec.json") as f:
-    spec_data = json.load(f)
+# ── Conformance Testing ──
+runner = ConformanceRunner(spec_path="spec.json", schema_path="schema.json")
+conf = runner.run_static()
 
-report = crunch_with_llm.audit(spec_data)
-
-print(f"Overall Security Score: {report.overall_score}/100")
-for issue in report.deterministic.issues + report.semantic.issues:
-    print(f"[{issue.severity}] {issue.rule_id}: {issue.message}")
+print(f"Conformance Score: {conf.summary.score}/100")
+print(f"Grade: {conf.summary.grade}")
+print(f"Passed: {conf.summary.passed}/{conf.summary.total_tests}")
 ```
 
-## 📋 Validation Rules
+## 🧪 Conformance Test Catalog
 
-For a detailed list of all supported rules and their impact, see [validations.md](./validations.md).
+### Static Tests (no server required)
 
-*   **FMT**: Format integrity and versioning.
-*   **DAT**: Data boundaries and context window protection.
-*   **SEC**: Authentication and transport security.
-*   **ADV**: Adversarial threat prevention (Semantic).
+| Test | Name | Severity | What it checks |
+|:--|:--|:--:|:--|
+| CT-3.8.1 | Schema Validity | High | Spec validates against OpenMCP JSON Schema |
+| CT-3.8.2 | Component References | High | All `$ref` pointers resolve |
+| CT-3.8.3 | Circular References | High | No cycles in `$ref` graphs |
+| CT-3.8.4 | Unused Components | High | No dead component definitions |
+| CT-3.8.5 | Name Collisions | High | Unique names across tools/prompts/resources |
+| CT-3.8.6 | Schema Strictness | Critical | `additionalProperties: false` on inputs |
+| CT-3.8.7 | String Boundaries | High | All strings have `maxLength` |
+| CT-3.8.8 | Array Boundaries | High | All arrays have `maxItems` |
+| CT-3.8.9 | Numeric Boundaries | Medium | All numbers have `minimum`/`maximum` |
+| CT-3.8.10 | Security Coverage | High | All tools have security bindings |
+| CT-3.8.11 | Bearer Format | Medium | Bearer schemes specify `bearerFormat` |
+| CT-3.8.12 | Transport Security | High | All servers use `https://` or `wss://` |
+| CT-3.8.13 | Description Quality | Medium | All entities have descriptions |
+
+### Scoring
+
+Conformance score is penalty-based (starts at 100):
+
+| Severity | Penalty per failed test |
+|:--|:--:|
+| Critical | −15 |
+| High | −8 |
+| Medium | −4 |
+| Low | −2 |
+
+**Grades:** A (90–100) · B (75–89) · C (60–74) · D (40–59) · F (0–39)
+
+## 📋 Security Audit Rules
+
+For the full list of 17+ validation rules, see [validations.md](./validations.md).
+
+- **FMT** — Format integrity, versioning, URI strictness
+- **DAT** — Data boundaries, context window protection, strict schemas
+- **SEC** — Authentication binding, transport security, API key safety
+- **ADV** — Adversarial threat prevention (semantic/LLM-based)
+
+## 📂 Examples
+
+See [`examples/`](./examples/) for complete usage demonstrations:
+
+| File | Description |
+|:--|:--|
+| `taskforge_production.json` | Production-grade spec (6 tools, 5 prompts, 4 resources) — 100/100 |
+| `notekeeper_average.json` | Typical spec with common issues — 41/100 |
+| `prodmcp_test_example.py` | Validates production spec (audit + conformance) |
+| `prodmcp_average_example.py` | Demonstrates scoring gap on average spec |
+| `usage_guide.py` | 10 runnable examples covering every API |
+| `CLI_REFERENCE.md` | Complete CLI command reference |
 
 ## 🧪 Testing
 
-Run the comprehensive test suite (16+ tests):
-
 ```bash
+# Run the full test suite (236 tests)
 pytest tests/
+
+# Run with verbose output
+pytest tests/ -v
 ```
 
+## 📦 Requirements
+
+- Python ≥ 3.10
+- jsonschema ≥ 4.20.0
+- pydantic ≥ 2.5.0
+- rich ≥ 13.7.0
+- httpx ≥ 0.27.0
+
+## 📄 License
+
+MIT — see [LICENSE](./LICENSE).
+
 ---
-Built with ❤️ for the AI Agent Ecosystem by **Anish Chelliah CR**.
+
+Built with ❤️ for the AI Agent Ecosystem by **Anish Chelliah CR** · [ProdMCP](https://prodmcp.dev)

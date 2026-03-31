@@ -5,7 +5,7 @@ import google.generativeai as genai
 from .base import LLMBase
 
 class GeminiProvider(LLMBase):
-    def __init__(self, api_key: Optional[str] = None, model_name: str = "gemini-1.5-pro"):
+    def __init__(self, api_key: Optional[str] = None, model_name: str = "gemini-3-flash-preview"):
         super().__init__(api_key or os.getenv("GEMINI_API_KEY"))
         if not self.api_key:
             raise ValueError("Gemini API key is required.")

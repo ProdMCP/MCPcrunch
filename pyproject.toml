@@ -1,6 +1,6 @@
 [project]
 name = "mcpcrunch"
-version = "0.1.0"
+version = "0.2.0"
 description = "Comprehensive Security and Structural Validation Framework for the OpenMCP Specification"
 authors = [
     { name = "Anish Chelliah CR", email = "anishchelliah.cr@google.com" }
@@ -14,6 +14,7 @@ dependencies = [
     "python-dotenv>=1.0.0",
     "rich>=13.7.0",
     "pyyaml>=6.0.1",
+    "httpx>=0.27.0",
 ]
 readme = "README.md"
 requires-python = ">=3.10"
@@ -30,3 +31,7 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 mcpcrunch = ["*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+collect_ignore_glob = ["src/*"]
