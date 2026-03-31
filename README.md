@@ -1,6 +1,21 @@
-# MCPcrunch 🔍
+<p align="center">
+  <img src="https://raw.githubusercontent.com/ProdMCP/MCPcrunch/main/assets/mcpcrunch-logo.png" alt="MCPcrunch Logo" width="480">
+</p>
 
-**MCPcrunch** is a comprehensive security auditing and conformance testing framework for the **OpenMCP Specification**.
+<h1 align="center">MCPcrunch 🔍</h1>
+
+<p align="center">
+  <strong>Comprehensive security auditing and conformance testing framework for the OpenMCP Specification.</strong>
+</p>
+
+<p align="center">
+  <a href="https://pypi.org/project/mcpcrunch/"><img src="https://img.shields.io/pypi/v/mcpcrunch?color=blue&label=PyPI" alt="PyPI"></a>
+  <a href="https://github.com/ProdMCP/MCPcrunch/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="License"></a>
+  <img src="https://img.shields.io/badge/python-3.10%2B-blue" alt="Python">
+  <img src="https://img.shields.io/badge/tests-236%20passing-brightgreen" alt="Tests">
+</p>
+
+---
 
 Inspired by [42Crunch](https://42crunch.com) for OpenAPI, MCPcrunch applies deterministic, semantic, and contract-level validation to ensure your MCP specifications are robust, secure, and production-ready.
 

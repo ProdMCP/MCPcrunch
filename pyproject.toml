@@ -1,11 +1,24 @@
 [project]
 name = "mcpcrunch"
-version = "0.2.0"
+version = "0.2.1"
 description = "Comprehensive Security and Structural Validation Framework for the OpenMCP Specification"
 authors = [
     { name = "Anish Chelliah CR", email = "anishchelliah.cr@google.com" }
 ]
 license = { text = "MIT" }
+keywords = ["mcp", "openmcp", "security", "conformance", "validation", "audit", "ai", "llm", "agent"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Security",
+    "Topic :: Software Development :: Testing",
+    "Topic :: Software Development :: Quality Assurance",
+]
 dependencies = [
     "jsonschema>=4.20.0",
     "pydantic>=2.5.0",
@@ -18,6 +31,13 @@ dependencies = [
 ]
 readme = "README.md"
 requires-python = ">=3.10"
+
+[project.urls]
+Homepage = "https://github.com/ProdMCP/MCPcrunch"
+Documentation = "https://github.com/ProdMCP/MCPcrunch#readme"
+Repository = "https://github.com/ProdMCP/MCPcrunch"
+Changelog = "https://github.com/ProdMCP/MCPcrunch/blob/main/CHANGELOG.md"
+"Bug Tracker" = "https://github.com/ProdMCP/MCPcrunch/issues"
 
 [project.scripts]
 mcpcrunch = "mcpcrunch.cli:main"
