@@ -17,8 +17,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Capability-Based Scoring — Per Tool / Prompt / Resource Breakdown
 - Every issue is now bucketed by the MCP capability it belongs to (tool, prompt, or resource).
-- The CLI displays a **Capability Scores** table with columns: `Type`, `Tool/Prompt/Resource`, `Security`, `Data Validation`, `Overall`, listing every registered capability.
-- Issues are reported **per-capability** in the detailed output — no more flat issue lists.
+- The CLI displays a **Capability Scores** table after the overall score:
+  ```
+  ┌──────────┬──────────────────────┬──────────┬──────────────────┬───────┐
+  │ Type     │ Name                 │ Security │ Data Validation  │ Score │
+  │          │                      │ /30      │ /70              │ /100  │
+  ├──────────┼──────────────────────┼──────────┼──────────────────┼───────┤
+  │ tool     │ create_ticket        │ 30       │ 70               │ 100   │
+  │ tool     │ get_weather          │ 20       │ 65               │ 85    │
+  │ prompt   │ summarize_text       │ 30       │ 70               │ 100   │
+  │ resource │ item_detail          │ 30       │ 60               │ 90    │
+  └──────────┴──────────────────────┴──────────┴──────────────────┴───────┘
+  ```
+- Issues are also reported **grouped per capability** in the detailed output — pinpoints exactly which tool, prompt, or resource a rule violation belongs to.
+- A capability with zero issues still appears in the table with a perfect 100 score.
 - `CapabilityScore` model added to the public Python API (`mcpcrunch.CapabilityScore`).
 - `ValidationReport.capability_scores: List[CapabilityScore]` added.
 
