@@ -17,14 +17,14 @@ class MCPcrunch:
     def audit(self, spec_data: Dict[str, Any]) -> FullReport:
         # Run deterministic validation
         det_issues = self.deterministic_validator.validate(spec_data)
-        det_report = generate_report(self.rules_count_det, det_issues)
+        det_report = generate_report(self.rules_count_det, det_issues, spec=spec_data)
 
         # Run semantic validation if LLM is available
         sem_issues = []
         if self.semantic_validator:
             sem_issues = self.semantic_validator.validate(spec_data)
         
-        sem_report = generate_report(self.rules_count_sem, sem_issues)
+        sem_report = generate_report(self.rules_count_sem, sem_issues, spec=spec_data)
 
         overall_score = (det_report.score + sem_report.score) // 2 if self.semantic_validator else det_report.score
 

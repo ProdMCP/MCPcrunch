@@ -5,6 +5,58 @@ All notable changes to MCPcrunch will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] — 2026-04-15
+
+### ✨ Features
+
+#### Partitioned Scoring Model (Security /30 · Data Validation /70)
+- Scores are now split into two independent pools: **Security** (max 30) and **Data Validation** (max 70), summing to 100.
+- Security rules (`OMCP-SEC-*`) deduct from the Security pool; all other rules deduct from the Data Validation pool.
+- Both pools are floored at 0 and reported separately in the CLI table and Python `ValidationReport`.
+- `ValidationReport` now exposes `security_score` and `validation_score` alongside the overall `score`.
+
+#### Capability-Based Scoring — Per Tool / Prompt / Resource Breakdown
+- Every issue is now bucketed by the MCP capability it belongs to (tool, prompt, or resource).
+- The CLI displays a **Capability Scores** table with columns: `Type`, `Tool/Prompt/Resource`, `Security`, `Data Validation`, `Overall`, listing every registered capability.
+- Issues are reported **per-capability** in the detailed output — no more flat issue lists.
+- `CapabilityScore` model added to the public Python API (`mcpcrunch.CapabilityScore`).
+- `ValidationReport.capability_scores: List[CapabilityScore]` added.
+
+#### Two New Documentation Quality Rules
+
+| Rule | Category | Severity | Penalty | What it checks |
+|---|---|---|---|---|
+| `OMCP-DOC-001` | Documentation | High | -10 | One or more capabilities in a section (tools/prompts/resources) have no `description` field |
+| `OMCP-DOC-002` | Documentation | High | -10 | One or more capabilities in a section have no `output_description` / 200 response description |
+
+- Rules aggregate at the **section level** — if 5 tools are missing descriptions that is **one** issue (−10), not five (−50).
+- Affected capability names are listed in the issue message for actionability.
+- Works for both OpenMCP (`tools`/`prompts`/`resources` sections) and OpenAPI (`paths` section grouped by `/tools/`, `/prompts/`, `/resources/` prefix).
+
+#### Security Scheme Validation Improvements
+- Added `OMCP-SEC-012`: flags OpenAPI operations that have no per-operation `security` field when a global security requirement is absent — previously silent.
+- Per-operation `security` field is now also injected for prompts and resources (not just tools) in generated specs.
+
+### 🐛 Bug Fixes
+- Fixed capability type column in CLI output — now correctly shows `tool`, `prompt`, or `resource` instead of the path prefix.
+- Fixed capability score bucketing for OpenAPI specs whose paths use `/resources/{mcp_uri}` wildcard patterns.
+
+### 🧪 Tests
+- 288 tests passing (up from 236).
+- Added `test_scoring.py` covering partitioned score calculation and capability bucketing.
+- Added `test_cli.py` rewritten to use temp files and verify new scoring output format.
+- Added `test_deterministic.py` OMCP-SEC-012 regression tests.
+- Added `test_engine.py` covering `CapabilityScore` exposure via the Python API.
+
+---
+
+## [0.2.1] — 2026-04-03
+
+### 🐛 Bug Fix
+- Added logo, PyPI metadata, publish to PyPI.
+
+---
+
 ## [0.2.0] — 2026-04-01
 
 ### 🚀 Major: Conformance Testing Engine

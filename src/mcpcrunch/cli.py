@@ -59,34 +59,107 @@ def _main_audit():
     # Display Summary
     summary_table = Table(title="Audit Summary")
     summary_table.add_column("Category", style="cyan")
-    summary_table.add_column("Score", style="bold")
-    summary_table.add_column("IssuesFound", style="red")
+    summary_table.add_column("Sec (/30)", justify="right", style="bold red")
+    summary_table.add_column("Dat (/70)", justify="right", style="bold yellow")
+    summary_table.add_column("Overall (/100)", justify="right", style="bold green")
+    summary_table.add_column("Issues", justify="right", style="red")
 
-    summary_table.add_row("Deterministic (FMT, DAT, SEC)", str(report.deterministic.score), str(len(report.deterministic.issues)))
+    summary_table.add_row(
+        "Deterministic (FMT, DAT, SEC)", 
+        str(report.deterministic.security_score), 
+        str(report.deterministic.validation_score),
+        str(report.deterministic.score),
+        str(len(report.deterministic.issues))
+    )
     if llm:
-        summary_table.add_row("Semantic (ADV)", str(report.semantic.score), str(len(report.semantic.issues)))
+        summary_table.add_row(
+            "Semantic (ADV)", 
+            str(report.semantic.security_score), 
+            str(report.semantic.validation_score),
+            str(report.semantic.score),
+            str(len(report.semantic.issues))
+        )
 
     console.print(summary_table)
-    console.print(f"\n[bold]Overall Security Score: {report.overall_score}/100[/bold]\n")
+    console.print(f"\n[bold]Global score:[/bold] {report.overall_score}/100")
+    console.print(f"[bold]Security score:[/bold] {report.deterministic.security_score}/30")
+    console.print(f"[bold]Data validation score:[/bold] {report.deterministic.validation_score}/70\n")
 
-    # Display Issues
-    issues = report.deterministic.issues + report.semantic.issues
-    if issues:
-        issues_table = Table(title="Security & Structural Issues")
-        issues_table.add_column("Rule ID", style="magenta")
-        issues_table.add_column("Severity", style="bold")
-        issues_table.add_column("Path", style="yellow")
-        issues_table.add_column("Message")
+    # Display Per-Entity Scores
+    ep_scores = report.deterministic.capability_scores
+    if ep_scores:
+        ep_table = Table(title="Tool / Resource / Prompt Scores")
+        ep_table.add_column("Name", style="cyan", no_wrap=True)
+        ep_table.add_column("Type", style="dim")
+        ep_table.add_column("Sec (/30)", justify="right", style="bold red")
+        ep_table.add_column("Dat (/70)", justify="right", style="bold yellow")
+        ep_table.add_column("Score (/100)", justify="right", style="bold green")
+        ep_table.add_column("Issues", justify="right", style="red")
 
-        for issue in issues:
-            severity_style = "red" if issue.severity in ["Critical", "High"] else "yellow"
-            issues_table.add_row(
-                issue.rule_id,
-                f"[{severity_style}]{issue.severity}[/{severity_style}]",
-                issue.path,
-                issue.message
+        for ep in ep_scores:
+            score_style = "green" if ep.score == 100 else ("yellow" if ep.score >= 70 else "red")
+            ep_table.add_row(
+                ep.name,
+                ep.type,
+                str(ep.security_score),
+                str(ep.validation_score),
+                f"[{score_style}]{ep.score}[/{score_style}]",
+                str(len(ep.issues)),
             )
-        console.print(issues_table)
+        console.print(ep_table)
+        console.print()
+
+    # Display Issues grouped by entity
+    ep_scores_with_issues = [ep for ep in ep_scores if ep.issues] if ep_scores else []
+    # Collect global issues (not tied to any entity)
+    all_ep_issue_paths = set()
+    for ep in (ep_scores or []):
+        for issue in ep.issues:
+            all_ep_issue_paths.add(id(issue))
+    
+    all_issues = report.deterministic.issues + report.semantic.issues
+    global_issues = [i for i in all_issues if id(i) not in all_ep_issue_paths]
+
+    if ep_scores_with_issues or global_issues:
+        if global_issues:
+            global_table = Table(title="Global Issues")
+            global_table.add_column("Rule ID", style="magenta")
+            global_table.add_column("Severity", style="bold")
+            global_table.add_column("Path", style="yellow")
+            global_table.add_column("Message")
+            for issue in global_issues:
+                severity_style = "red" if issue.severity in ["Critical", "High"] else "yellow"
+                global_table.add_row(
+                    issue.rule_id,
+                    f"[{severity_style}]{issue.severity}[/{severity_style}]",
+                    issue.path,
+                    issue.message,
+                )
+            console.print(global_table)
+            console.print()
+
+        for ep in ep_scores_with_issues:
+            score_color = "green" if ep.score == 100 else ("yellow" if ep.score >= 70 else "red")
+            console.print(
+                f"[bold cyan]{ep.name}[/bold cyan] "
+                f"[dim]({ep.type})[/dim]  "
+                f"Sec: [bold red]{ep.security_score}/30[/bold red]  "
+                f"Dat: [bold yellow]{ep.validation_score}/70[/bold yellow]  "
+                f"Score: [{score_color}]{ep.score}/100[/{score_color}]"
+            )
+            issue_table = Table(show_header=True, box=None, padding=(0, 1))
+            issue_table.add_column("Rule ID", style="magenta")
+            issue_table.add_column("Severity", style="bold")
+            issue_table.add_column("Message")
+            for issue in ep.issues:
+                severity_style = "red" if issue.severity in ["Critical", "High"] else "yellow"
+                issue_table.add_row(
+                    issue.rule_id,
+                    f"[{severity_style}]{issue.severity}[/{severity_style}]",
+                    issue.message,
+                )
+            console.print(issue_table)
+            console.print()
     else:
         console.print("[bold green]No issues found! Your OpenMCP spec is secure and robust.[/bold green]")
 

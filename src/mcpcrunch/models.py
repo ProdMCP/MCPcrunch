@@ -23,11 +23,23 @@ class ValidationIssue(BaseModel):
     severity: Severity
     evidence: Optional[str] = None
 
+class CapabilityScore(BaseModel):
+    """Per-capability score breakdown (tool, resource, or prompt)."""
+    name: str
+    type: str  # "tool", "prompt", "resource"
+    security_score: int = 30
+    validation_score: int = 70
+    score: int = 100
+    issues: List[ValidationIssue] = []
+
 class ValidationReport(BaseModel):
     score: int = 0
+    security_score: int = 0
+    validation_score: int = 0
     total_rules: int = 0
     passed_rules: int = 0
     issues: List[ValidationIssue] = []
+    capability_scores: List[CapabilityScore] = []
     metadata: Dict[str, Any] = {}
 
 class FullReport(BaseModel):

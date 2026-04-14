@@ -1,5 +1,5 @@
 from .engine import MCPcrunch
-from .models import FullReport, ValidationReport, ValidationIssue, Severity
+from .models import FullReport, ValidationReport, ValidationIssue, CapabilityScore, Severity
 from .llm.base import LLMBase
 from .llm.gemini import GeminiProvider
 from .llm.openai import OpenAIProvider
@@ -19,6 +19,7 @@ __all__ = [
     "FullReport",
     "ValidationReport",
     "ValidationIssue",
+    "CapabilityScore",
     "Severity",
     "LLMBase",
     "GeminiProvider",

@@ -1,6 +1,6 @@
 [project]
 name = "mcpcrunch"
-version = "0.2.1"
+version = "0.3.0"
 description = "Comprehensive Security and Structural Validation Framework for the OpenMCP Specification"
 authors = [
     { name = "Anish Chelliah CR", email = "anishchelliah.cr@google.com" }
